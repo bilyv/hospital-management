@@ -6,6 +6,7 @@ import StaffTable from './components/StaffTable.jsx';
 import StaffFilters from './components/StaffFilters.jsx';
 import TopBar from './components/TopBar.jsx';
 import OrgManagement from './components/OrgManagement.jsx';
+import Toast from './components/Toast.jsx';
 
 const api = axios.create({
   baseURL: '/api',
@@ -131,6 +132,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen gradient-bg">
+      <Toast message={message} onDismiss={() => setMessage('')} />
       <TopBar user={user} onLogout={handleLogout} />
       <main className="px-6 pb-12">
         <div className="mx-auto max-w-6xl space-y-8">
@@ -145,11 +147,6 @@ export default function App() {
             </div>
           </section>
 
-          {message && (
-            <div className="card border-l-4 border-emerald-500 p-4 text-sm text-emerald-800">
-              {message}
-            </div>
-          )}
 
           <OrgManagement 
             departments={departments} 
