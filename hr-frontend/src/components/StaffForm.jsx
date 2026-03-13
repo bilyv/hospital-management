@@ -1,4 +1,4 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 const emptyForm = {
   firstName: '',
@@ -10,8 +10,7 @@ const emptyForm = {
   address: '',
   postId: '',
   hireDate: '',
-  salary: '',
-  status: ''
+  salary: ''
 };
 
 export default function StaffForm({ departments, posts, editing, onCancel, onCreate, onUpdate }) {
@@ -30,8 +29,7 @@ export default function StaffForm({ departments, posts, editing, onCancel, onCre
         address: editing.Address || '',
         postId: editing.PostID || '',
         hireDate: editing.HireDate ? editing.HireDate.slice(0, 10) : '',
-        salary: editing.Salary || '',
-        status: editing.Status || ''
+        salary: editing.Salary || ''
       });
     } else {
       setForm(emptyForm);
@@ -122,10 +120,7 @@ export default function StaffForm({ departments, posts, editing, onCancel, onCre
           <label className="label" htmlFor="salary">Salary</label>
           <input className="input mt-1" id="salary" name="salary" type="number" value={form.salary} onChange={handleChange} />
         </div>
-        <div>
-          <label className="label" htmlFor="status">Status</label>
-          <input className="input mt-1" id="status" name="status" value={form.status} onChange={handleChange} />
-        </div>
+
       </div>
 
       <button className="btn btn-primary w-full" type="submit">

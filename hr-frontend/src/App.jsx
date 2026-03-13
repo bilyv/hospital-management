@@ -1,10 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import axios from 'axios';
 import LoginForm from './components/LoginForm.jsx';
 import StaffForm from './components/StaffForm.jsx';
 import StaffTable from './components/StaffTable.jsx';
-import Filters from './components/Filters.jsx';
 import TopBar from './components/TopBar.jsx';
+import OrgManagement from './components/OrgManagement.jsx';
 
 const api = axios.create({
   baseURL: '/api',
@@ -16,23 +16,11 @@ export default function App() {
   const [staff, setStaff] = useState([]);
   const [departments, setDepartments] = useState([]);
   const [posts, setPosts] = useState([]);
-  const [filters, setFilters] = useState({
-    departmentId: '',
-    postId: '',
-    hireStart: '',
-    hireEnd: '',
-    q: ''
-  });
+
   const [editing, setEditing] = useState(null);
   const [message, setMessage] = useState('');
 
-  const filterParams = useMemo(() => {
-    const params = {};
-    Object.entries(filters).forEach(([key, value]) => {
-      if (value) params[key] = value;
-    });
-    return params;
-  }, [filters]);
+
 
   const loadMeta = async () => {
     const [depRes, postRes] = await Promise.all([
@@ -44,8 +32,20 @@ export default function App() {
   };
 
   const loadStaff = async () => {
-    const res = await api.get('/staff', { params: filterParams });
+    const res = await api.get('/staff');
     setStaff(res.data);
+  };
+
+  const handleAddDepartment = async (name) => {
+    await api.post('/meta/departments', { name });
+    await loadMeta();
+    setMessage(`Department "${name}" added.`);
+  };
+
+  const handleAddPost = async (title, departmentId) => {
+    await api.post('/meta/posts', { title, departmentId });
+    await loadMeta();
+    setMessage(`Role "${title}" added.`);
   };
 
   const loadMe = async () => {
@@ -65,7 +65,7 @@ export default function App() {
     if (!user) return;
     loadMeta();
     loadStaff();
-  }, [user, filterParams]);
+  }, [user]);
 
   const handleLogin = async (values) => {
     try {
@@ -127,7 +127,6 @@ export default function App() {
                   Manage staff records, roles, and recruitment data in one place.
                 </p>
               </div>
-              <div className="badge">Session-based login active</div>
             </div>
           </section>
 
@@ -137,7 +136,13 @@ export default function App() {
             </div>
           )}
 
-          <section className="grid gap-8 lg:grid-cols-[1.1fr_1fr]">
+          <OrgManagement 
+            departments={departments} 
+            onAddDepartment={handleAddDepartment}
+            onAddPost={handleAddPost}
+          />
+
+          <section className="grid gap-8">
             <StaffForm
               departments={departments}
               posts={posts}
@@ -145,12 +150,6 @@ export default function App() {
               onCancel={() => setEditing(null)}
               onCreate={handleCreate}
               onUpdate={handleUpdate}
-            />
-            <Filters
-              departments={departments}
-              posts={posts}
-              filters={filters}
-              onChange={setFilters}
             />
           </section>
 
