@@ -1,4 +1,4 @@
-﻿export default function StaffTable({ staff, onEdit, onDelete }) {
+export default function StaffTable({ staff, onEdit, onDelete }) {
   return (
     <div className="mt-6 overflow-auto">
       <table className="min-w-full text-sm">
@@ -6,9 +6,8 @@
           <tr>
             <th className="pb-3">Name</th>
             <th className="pb-3">Department</th>
-            <th className="pb-3">Role</th>
+            <th className="pb-3">Post</th>
             <th className="pb-3">Hire Date</th>
-            <th className="pb-3">Status</th>
             <th className="pb-3">Actions</th>
           </tr>
         </thead>
@@ -22,7 +21,6 @@
               <td className="py-3">{item.DepName || 'Unassigned'}</td>
               <td className="py-3">{item.PostTitle || 'Unassigned'}</td>
               <td className="py-3">{item.HireDate ? item.HireDate.slice(0, 10) : '—'}</td>
-              <td className="py-3">{item.Status || 'Active'}</td>
               <td className="py-3">
                 <div className="flex gap-2">
                   <button className="btn btn-ghost" onClick={() => onEdit(item)}>Edit</button>

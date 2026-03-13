@@ -3,6 +3,7 @@ import axios from 'axios';
 import LoginForm from './components/LoginForm.jsx';
 import StaffForm from './components/StaffForm.jsx';
 import StaffTable from './components/StaffTable.jsx';
+import StaffFilters from './components/StaffFilters.jsx';
 import TopBar from './components/TopBar.jsx';
 import OrgManagement from './components/OrgManagement.jsx';
 
@@ -19,8 +20,12 @@ export default function App() {
 
   const [editing, setEditing] = useState(null);
   const [message, setMessage] = useState('');
-
-
+  const [filters, setFilters] = useState({
+    departmentId: '',
+    postId: '',
+    hireStart: '',
+    hireEnd: ''
+  });
 
   const loadMeta = async () => {
     const [depRes, postRes] = await Promise.all([
@@ -31,9 +36,19 @@ export default function App() {
     setPosts(postRes.data);
   };
 
-  const loadStaff = async () => {
-    const res = await api.get('/staff');
+  const loadStaff = async (activeFilters = filters) => {
+    const params = {};
+    if (activeFilters.departmentId) params.departmentId = activeFilters.departmentId;
+    if (activeFilters.postId) params.postId = activeFilters.postId;
+    if (activeFilters.hireStart) params.hireStart = activeFilters.hireStart;
+    if (activeFilters.hireEnd) params.hireEnd = activeFilters.hireEnd;
+    const res = await api.get('/staff', { params });
     setStaff(res.data);
+  };
+
+  const handleFilterChange = (newFilters) => {
+    setFilters(newFilters);
+    loadStaff(newFilters);
   };
 
   const handleAddDepartment = async (name) => {
@@ -153,10 +168,19 @@ export default function App() {
             />
           </section>
 
+          <StaffFilters
+            departments={departments}
+            posts={posts}
+            filters={filters}
+            onChange={handleFilterChange}
+          />
+
           <section className="card p-6">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-4">
               <h2 className="font-display text-2xl text-slate-800">Staff Directory</h2>
-              <span className="text-sm text-slate-500">{staff.length} records</span>
+              <span className="text-sm text-slate-500">
+                {staff.length} record{staff.length !== 1 ? 's' : ''} found
+              </span>
             </div>
             <StaffTable
               staff={staff}
